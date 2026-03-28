@@ -1,0 +1,28 @@
+services:
+  - type: web
+    name: instaagent
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: INSTAGRAM_VERIFY_TOKEN
+        sync: false          # Render dashboard'dan gireceksin
+      - key: INSTAGRAM_ACCESS_TOKEN
+        sync: false
+      - key: INSTAGRAM_PAGE_ID
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: DATABASE_URL
+        sync: false          # Supabase connection string
+      - key: DASHBOARD_USERNAME
+        value: admin
+      - key: DASHBOARD_PASSWORD
+        sync: false
+      - key: SECRET_KEY
+        sync: false
+      - key: AUTO_REPLY_CONFIDENCE_THRESHOLD
+        value: "0.90"
+      - key: ENVIRONMENT
+        value: production
