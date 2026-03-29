@@ -1,0 +1,143 @@
+# Bašča Kafe — Bilgi Tabanı / Knowledge Base / Baza Znanja
+
+## GENEL BİLGİLER / GENERAL INFO / OPŠTE INFORMACIJE
+
+**İsim / Name / Naziv:** Eve doğru Bašča Kafe
+**Adres / Address / Adresa:** Sarajevo, Baščaršija 18/a
+**Çalışma Saatleri / Working Hours / Radno Vrijeme:** Her gün / Every day / Svaki dan 07:00 - 23:00
+**Mutfak Son Sipariş / Kitchen Last Order / Kuhinja Zadnja Narudžba:** 16:30
+**Paket Servis / Takeaway / Dostava:** Mevcut / Available / Dostupno
+**Diller / Languages / Jezici:** Türkçe, Bosnian/Bosanski, English
+
+---
+
+## ÇALIŞMA SAATLERİ HAKKINDA / ABOUT WORKING HOURS
+
+- Kafe haftanın 7 günü 07:00-23:00 arası açıktır.
+- Mutfak saat 16:30'da kapanır, son yemek siparişleri bu saatte alınır.
+- 16:30 sonrasında içecek ve tatlı siparişleri alınmaya devam eder.
+- The cafe is open 7 days a week from 07:00 to 23:00.
+- The kitchen closes at 16:30, last food orders taken at this time.
+- After 16:30, drinks and desserts are still available.
+- Kafe radi svaki dan od 07:00 do 23:00.
+- Kuhinja se zatvara u 16:30, posljednje narudžbe za hranu primaju se u to vrijeme.
+- Nakon 16:30, piće i deserti su još uvijek dostupni.
+
+---
+
+## MENÜ / MENU
+
+### ☕ KAFE NA OSNOVU ESPRESSO / HOT COFFEES
+- Espresso — 4.0 KM
+- Dupli Espresso — 5.5 KM
+- Ristretto — 4.0 KM
+- Lungo — 4.0 KM
+- Espresso Macchiato — 4.5 KM
+- Latte Macchiato — 5.5 KM
+- Mocha — 7.0 KM
+- Americano — 5.0 KM
+- Long Black — 5.0 KM
+- Flat White — 7.0 KM
+- Cortado — 6.5 KM
+- Cafe Latte — 5.5 KM
+- Cappuccino — 5.5 KM
+- Prilog Mlijeko (Side Milk) — 0.5 KM
+- Bosanska Kahva (Bosnian Coffee) — 5.0 KM
+- Nescafe (Classic, Chocolate, Cappuccino, Vanilla Latte, Irish Latte) — 5.0 KM
+
+### 🧊 ICED COFFEES
+- Ice Americano / Ice Latte — 6.0 KM
+- Ice Mocha / Ice White Mocha — 7.0 KM
+- Ice Caramel Macchiato — 7.0 KM
+- Ice Caramel Latte — 7.0 KM
+
+### 🍵 OTHER HOT BEVERAGES
+- Traditional Salep — 5.0 KM
+- Topla Cokolada (Hot Chocolate) — 5.0 KM
+- Biljni Čaj / Herbal Tea (Green, Jasmine, Cinnamon, Chamomile, Mint, Fruit Mix) — 5.0 KM
+- Turksi Čaj / Türk Çayı / Turkish Tea — 3.5 KM
+
+### 🥤 HLADNA PIĆA / COLD DRINKS
+- Milkshake (Strawberry, Vanilla, Ice Chocolate, Nut, Cherry, Tropical, Frutti di Bosco) — 6.0 KM
+- Coca Cola / Fanta — 5.0 KM
+- Sprite / Cappy — 5.0 KM
+- Sensation / Cockta — 4.0 KM
+- Cedevita (Orange, Lime, Pineapple-Mango, Oat-Lemon, Lemon) — 3.0 KM
+- Kuca Prirode (Banana, Sour Cherry, Pineapple, Mango) — 4.0 KM
+- Jana Vitamin / Fuze Tea (Lemon, Orange, Peach, Forest Fruits) — 4.0 KM
+- Cijedeni Sokovi / Freshly Squeezed Juices (Orange, Lemonade, Blueberry) — 6.0 KM
+- Olimpija Voda / Water 0.75L (Carbonated/Non-carbonated) — 3.0 KM
+- Churchill (Soda, Lemon, Salt) — 7.0 KM
+- Redbull — 6.0 KM
+
+### 🍳 DORUČAK / BREAKFAST
+- Omlet — 8.0 KM
+- Omlet sa Sudžukom — 9.0 KM
+- Omlet sa Sirom — 9.0 KM
+- Tost sa Sirom — 6.0 KM
+- Tost sa Sudžukom — 6.0 KM
+- Tost Mix — 7.0 KM
+- Menemen — 9.0 KM
+- Ustipci — 7.0 KM
+- Ustipci Suho Meso — 11.5 KM
+- Pomfrit / French Fries — 5.5 KM
+
+### 🍳 DORUČAK SETI / BREAKFAST SET
+- Za Jednu Osobu / For One Person — 18.0 KM
+  (3-egg omelette, assorted cheeses, cured beef, salami, sucuk, French fries, kajmak, butter, honey, chocolate, jam, ajvar, olives, fresh tomato & cucumber, 2 cups of tea)
+- Doručak za Dvije Osobe / For Two Persons — 44.0 KM
+  (Same as above, double portion, 4 cups of tea)
+
+### 🥪 TOST / TOAST
+- Čedar Sir / Cheddar Cheese — 6.0 KM
+- Sudžuk — 6.0 KM
+- Mix (Sucuk & Cheese) — 7.0 KM
+- French Toast — 8.0 KM
+- Hladni Sendvič / Cold Sandwich — 5.0 KM
+
+### 🍲 SUPE / SOUPS
+- Mercimek / Lentil — 6.0 KM
+- Pileća / Chicken — 8.0 KM
+
+### 🍰 DESERT & TORTA / DESSERT & CAKE
+- Baklava 80gr (Pistachio, Walnut, Cold Baklava with Milk) — 7.0 KM
+- Baklava Rolovana 120gr (Rolled Baklava with Pistachio) — 8.0 KM
+- Baklava Mix 120gr — 10.0 KM
+- Sutlija / Sütlaç (Rice pudding with roasted hazelnuts) — 6.0 KM
+- San Sebastian Cheesecake — 8.0 KM
+- Torta / Cake (Pistachio, Forest Fruit, Chocolate, Vanilla, Orange, Bounty, Bueno) — 6.0 KM
+- Trileće (Sponge cake soaked in three kinds of milk with caramel) — 5.5 KM
+- Tufahija (Poached apple with walnuts and whipped cream) — 5.0 KM
+- Hurmašica (Traditional butter pastry in sugar syrup) — 5.5 KM
+- Magnolia (Milk dessert with pastry cream, biscuits, strawberries) — 7.0 KM
+
+---
+
+## ÖZEL / SPECIAL
+
+### Askıda Kahvaltı / Suspended Breakfast / Donacija Doručak
+Bir kahvaltı satın alarak ihtiyaç sahibi birine kahvaltı hediye edebilirsiniz.
+By purchasing one breakfast, you can treat someone in need to a breakfast as well.
+Možete učestvovati sa iznosom koji sami odaberete za besplatan doručak osobama kojima je potreban.
+
+---
+
+## SIK SORULAN SORULAR / FAQ
+
+**Rezervasyon var mı? / Do you accept reservations? / Da li primate rezervacije?**
+Bilgi için lütfen DM ile iletişime geçin. / Please contact us via DM. / Kontaktirajte nas putem DM-a.
+
+**Paket servis var mı? / Do you offer takeaway? / Da li nudite dostavu?**
+Evet, paket servis mevcuttur. / Yes, takeaway is available. / Da, dostava je dostupna.
+
+**Mutfak ne zaman kapanıyor? / When does the kitchen close?**
+Mutfak saat 16:30'da kapanır. / The kitchen closes at 16:30. / Kuhinja se zatvara u 16:30.
+
+**Wi-Fi var mı? / Is there Wi-Fi? / Da li imate Wi-Fi?**
+Evet, ücretsiz Wi-Fi mevcuttur. / Yes, free Wi-Fi is available. / Da, besplatan Wi-Fi je dostupan.
+
+**Evcil hayvan dostu mu? / Is it pet-friendly? / Da li je dozvoljeno s kućnim ljubimcima?**
+Evet, evcil hayvan dostuyuz! / Yes, we are pet-friendly! / Da, dobrodošli ste s kućnim ljubimcima! 🐾
+
+**Ödeme yöntemleri? / Payment methods?**
+Nakit ve kart kabul edilmektedir. / Cash and card accepted. / Gotovina i kartica.
