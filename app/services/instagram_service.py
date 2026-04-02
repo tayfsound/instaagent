@@ -9,7 +9,7 @@ from app.config import settings
 
 logger = logging.getLogger(__name__)
 
-GRAPH_URL = "https://graph.facebook.com/v19.0"
+GRAPH_URL = "https://graph.instagram.com/v21.0"
 
 
 async def send_dm(recipient_id: str, message_text: str) -> bool:
