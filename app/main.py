@@ -54,3 +54,10 @@ async def root():
 @app.get("/health")
 async def health():
     return {"status": "healthy"}
+
+from fastapi.responses import FileResponse
+import os
+
+@app.get("/dashboard")
+async def dashboard():
+    return FileResponse("dashboard.html")
