@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bašča Kafe — InstaAgent Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0f0f;
+    --surface: #1a1a1a;
+    --surface2: #242424;
+    --border: #2e2e2e;
+    --green: #4ade80;
+    --orange: #fb923c;
+    --red: #f87171;
+    --blue: #60a5fa;
+    --text: #f0f0f0;
+    --muted: #666;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  /* Login */
+  #login-screen {
+    display: flex; align-items: center; justify-content: center;
+    min-height: 100vh;
+    background: var(--bg);
+  }
+  .login-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 40px;
+    width: 340px;
+  }
+  .login-logo {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--green);
+    margin-bottom: 8px;
+  }
+  .login-sub { font-size: 11px; color: var(--muted); margin-bottom: 32px; }
+  .form-group { margin-bottom: 16px; }
+  .form-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; display: block; }
+  .form-input {
+    width: 100%; padding: 10px 14px;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 8px; color: var(--text); font-family: 'DM Mono', monospace;
+    font-size: 13px; outline: none;
+    transition: border-color 0.2s;
+  }
+  .form-input:focus { border-color: var(--green); }
+  .btn-login {
+    width: 100%; padding: 12px;
+    background: var(--green); color: #000;
+    border: none; border-radius: 8px;
+    font-family: 'Syne', sans-serif; font-weight: 700; font-size: 14px;
+    cursor: pointer; margin-top: 8px;
+    transition: opacity 0.2s;
+  }
+  .btn-login:hover { opacity: 0.85; }
+  .error-msg { color: var(--red); font-size: 11px; margin-top: 8px; text-align: center; }
+
+  /* Dashboard */
+  #dashboard { display: none; }
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 24px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; z-index: 10;
+  }
+  .topbar-left { display: flex; align-items: center; gap: 12px; }
+  .topbar-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 16px; color: var(--green); }
+  .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+  .status-text { font-size: 11px; color: var(--muted); }
+  .btn-logout { background: none; border: 1px solid var(--border); color: var(--muted); padding: 6px 12px; border-radius: 6px; font-size: 11px; cursor: pointer; font-family: 'DM Mono', monospace; }
+  .btn-logout:hover { color: var(--red); border-color: var(--red); }
+  .btn-refresh { background: none; border: 1px solid var(--border); color: var(--muted); padding: 6px 12px; border-radius: 6px; font-size: 11px; cursor: pointer; font-family: 'DM Mono', monospace; margin-right: 8px; }
+  .btn-refresh:hover { color: var(--green); border-color: var(--green); }
+
+  /* Stats */
+  .stats-row {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 12px; padding: 20px 24px;
+  }
+  @media (max-width: 600px) { .stats-row { grid-template-columns: repeat(2, 1fr); } }
+  .stat-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 16px;
+  }
+  .stat-val { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; }
+  .stat-label { font-size: 10px; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  /* Tabs */
+  .tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); padding: 0 24px; }
+  .tab { padding: 12px 16px; font-size: 12px; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.15s; }
+  .tab.active { color: var(--green); border-bottom-color: var(--green); }
+  .tab-badge { background: var(--orange); color: #000; font-size: 9px; font-weight: 700; padding: 1px 5px; border-radius: 10px; margin-left: 4px; }
+
+  /* Messages */
+  .messages-list { padding: 16px 24px; display: flex; flex-direction: column; gap: 12px; }
+  .msg-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 16px;
+    transition: border-color 0.2s;
+  }
+  .msg-card:hover { border-color: #444; }
+  .msg-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .msg-user { font-size: 12px; font-weight: 600; color: var(--blue); }
+  .msg-time { font-size: 10px; color: var(--muted); }
+  .msg-type { font-size: 9px; padding: 2px 7px; border-radius: 4px; margin-left: 6px; }
+  .type-dm { background: rgba(96,165,250,0.15); color: var(--blue); }
+  .type-comment { background: rgba(251,146,60,0.15); color: var(--orange); }
+  .type-story_reply { background: rgba(167,139,250,0.15); color: #a78bfa; }
+
+  .msg-bubble {
+    background: var(--surface2); border-radius: 8px 8px 8px 2px;
+    padding: 10px 12px; font-size: 13px; margin-bottom: 10px;
+    line-height: 1.5; color: var(--text);
+  }
+  .ai-label { font-size: 10px; color: var(--green); margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+  .confidence-bar { flex: 1; height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .confidence-fill { height: 100%; background: var(--green); border-radius: 2px; }
+  .ai-bubble {
+    background: rgba(74,222,128,0.05); border: 1px solid rgba(74,222,128,0.2);
+    border-radius: 2px 8px 8px 8px; padding: 10px 12px;
+    font-size: 13px; margin-bottom: 12px; line-height: 1.5;
+  }
+  .msg-actions { display: flex; gap: 8px; }
+  .btn-approve {
+    flex: 1; padding: 8px; background: rgba(74,222,128,0.15);
+    border: 1px solid rgba(74,222,128,0.3); color: var(--green);
+    border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer;
+    font-family: 'DM Mono', monospace; transition: all 0.15s;
+  }
+  .btn-approve:hover { background: rgba(74,222,128,0.25); }
+  .btn-escalate {
+    padding: 8px 12px; background: none;
+    border: 1px solid var(--border); color: var(--muted);
+    border-radius: 8px; font-size: 12px; cursor: pointer;
+    font-family: 'DM Mono', monospace; transition: all 0.15s;
+  }
+  .btn-escalate:hover { border-color: var(--red); color: var(--red); }
+  .btn-edit {
+    padding: 8px 12px; background: none;
+    border: 1px solid var(--border); color: var(--muted);
+    border-radius: 8px; font-size: 12px; cursor: pointer;
+    font-family: 'DM Mono', monospace; transition: all 0.15s;
+  }
+  .btn-edit:hover { border-color: var(--orange); color: var(--orange); }
+
+  .status-sent { color: var(--green); font-size: 10px; }
+  .status-escalated { color: var(--red); font-size: 10px; }
+  .status-pending { color: var(--orange); font-size: 10px; }
+
+  .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); font-size: 13px; }
+  .empty-icon { font-size: 40px; margin-bottom: 12px; }
+
+  .loading { text-align: center; padding: 40px; color: var(--muted); font-size: 12px; }
+
+  /* Edit modal */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.8); z-index: 100;
+    align-items: center; justify-content: center;
+    padding: 20px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; padding: 24px; width: 100%; max-width: 500px;
+  }
+  .modal-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 16px; margin-bottom: 16px; }
+  .edit-textarea {
+    width: 100%; min-height: 100px; padding: 10px 12px;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 8px; color: var(--text); font-family: 'DM Mono', monospace;
+    font-size: 13px; resize: vertical; outline: none; line-height: 1.5;
+  }
+  .edit-textarea:focus { border-color: var(--green); }
+  .modal-actions { display: flex; gap: 8px; margin-top: 12px; }
+  .btn-send-edit {
+    flex: 1; padding: 10px; background: var(--green); color: #000;
+    border: none; border-radius: 8px; font-family: 'Syne', sans-serif;
+    font-weight: 700; font-size: 13px; cursor: pointer;
+  }
+  .btn-cancel {
+    padding: 10px 16px; background: none;
+    border: 1px solid var(--border); color: var(--muted);
+    border-radius: 8px; font-size: 13px; cursor: pointer;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .toast {
+    position: fixed; bottom: 24px; right: 24px;
+    background: var(--surface); border: 1px solid var(--green);
+    color: var(--green); padding: 12px 20px; border-radius: 8px;
+    font-size: 12px; z-index: 200; display: none;
+    animation: slideIn 0.3s ease;
+  }
+  @keyframes slideIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+</style>
+</head>
+<body>
+
+<!-- Login -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">⚡ InstaAgent</div>
+    <div class="login-sub">Bašča Kafe — Yönetim Paneli</div>
+    <div class="form-group">
+      <label class="form-label">Kullanıcı Adı</label>
+      <input type="text" class="form-input" id="username" value="admin" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Şifre</label>
+      <input type="password" class="form-input" id="password" />
+    </div>
+    <button class="btn-login" onclick="login()">Giriş Yap</button>
+    <div class="error-msg" id="login-error"></div>
+  </div>
+</div>
+
+<!-- Dashboard -->
+<div id="dashboard">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-logo">⚡ InstaAgent</div>
+      <div class="status-dot"></div>
+      <div class="status-text">Canlı</div>
+    </div>
+    <div>
+      <button class="btn-refresh" onclick="loadAll()">↻ Yenile</button>
+      <button class="btn-logout" onclick="logout()">Çıkış</button>
+    </div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-val" id="stat-total" style="color:var(--blue)">—</div>
+      <div class="stat-label">Bugün Toplam</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" id="stat-rate" style="color:var(--green)">—</div>
+      <div class="stat-label">Oto. Çözüm %</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" id="stat-time" style="color:var(--orange)">—</div>
+      <div class="stat-label">Ort. Yanıt (sn)</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" id="stat-pending" style="color:var(--red)">—</div>
+      <div class="stat-label">Onay Bekleyen</div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('pending')">
+      Bekleyenler <span class="tab-badge" id="pending-badge">0</span>
+    </div>
+    <div class="tab" onclick="switchTab('all')">Tüm Mesajlar</div>
+    <div class="tab" onclick="switchTab('sent')">Gönderildi</div>
+  </div>
+
+  <div class="messages-list" id="messages-list">
+    <div class="loading">Yükleniyor...</div>
+  </div>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal-overlay" id="edit-modal">
+  <div class="modal">
+    <div class="modal-title">✏️ Yanıtı Düzenle</div>
+    <textarea class="edit-textarea" id="edit-text"></textarea>
+    <div class="modal-actions">
+      <button class="btn-send-edit" onclick="sendEdited()">✓ Gönder</button>
+      <button class="btn-cancel" onclick="closeModal()">İptal</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const API = 'https://instaagent-3r23.onrender.com';
+  let token = localStorage.getItem('dashboard_token');
+  let currentTab = 'pending';
+  let editingMsgId = null;
+
+  // Auth check
+  if (token) {
+    showDashboard();
+    loadAll();
+  }
+
+  async function login() {
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    const err = document.getElementById('login-error');
+    err.textContent = '';
+
+    try {
+      const resp = await fetch(`${API}/api/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      });
+      const data = await resp.json();
+      if (data.access_token) {
+        token = data.access_token;
+        localStorage.setItem('dashboard_token', token);
+        showDashboard();
+        loadAll();
+      } else {
+        err.textContent = 'Kullanıcı adı veya şifre hatalı';
+      }
+    } catch (e) {
+      err.textContent = 'Bağlantı hatası';
+    }
+  }
+
+  function showDashboard() {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+  }
+
+  function logout() {
+    localStorage.removeItem('dashboard_token');
+    token = null;
+    document.getElementById('login-screen').style.display = 'flex';
+    document.getElementById('dashboard').style.display = 'none';
+  }
+
+  async function loadAll() {
+    await Promise.all([loadStats(), loadMessages()]);
+    // Auto refresh every 30 seconds
+    setTimeout(loadAll, 30000);
+  }
+
+  async function loadStats() {
+    try {
+      const resp = await fetch(`${API}/api/messages/stats`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (resp.status === 401) { logout(); return; }
+      const data = await resp.json();
+      document.getElementById('stat-total').textContent = data.total_today || 0;
+      document.getElementById('stat-rate').textContent = (data.auto_resolved_rate || 0).toFixed(0) + '%';
+      document.getElementById('stat-time').textContent = (data.avg_response_time_sec || 0).toFixed(1);
+      document.getElementById('stat-pending').textContent = data.pending_count || 0;
+      document.getElementById('pending-badge').textContent = data.pending_count || 0;
+    } catch (e) {}
+  }
+
+  async function loadMessages() {
+    const list = document.getElementById('messages-list');
+    list.innerHTML = '<div class="loading">Yükleniyor...</div>';
+
+    try {
+      let url = `${API}/api/messages/`;
+      if (currentTab === 'pending') url = `${API}/api/messages/pending`;
+      if (currentTab === 'sent') url = `${API}/api/messages/?status=sent`;
+
+      const resp = await fetch(url, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (resp.status === 401) { logout(); return; }
+      const messages = await resp.json();
+
+      if (!messages.length) {
+        list.innerHTML = `<div class="empty-state"><div class="empty-icon">📭</div>Mesaj yok</div>`;
+        return;
+      }
+
+      list.innerHTML = messages.map(msg => renderMsg(msg)).join('');
+    } catch (e) {
+      list.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div>Yükleme hatası</div>`;
+    }
+  }
+
+  function renderMsg(msg) {
+    const time = new Date(msg.created_at).toLocaleString('tr-TR');
+    const typeLabel = msg.message_type === 'dm' ? 'DM' : msg.message_type === 'comment' ? 'YORUM' : 'STORY';
+    const typeClass = `type-${msg.message_type}`;
+    const conf = Math.round((msg.ai_confidence || 0) * 100);
+
+    let statusBadge = '';
+    if (msg.status === 'sent') statusBadge = '<span class="status-sent">✓ Gönderildi</span>';
+    else if (msg.status === 'escalated') statusBadge = '<span class="status-escalated">↗ Yönlendirildi</span>';
+    else if (msg.status === 'pending') statusBadge = '<span class="status-pending">⏳ Bekliyor</span>';
+
+    let actions = '';
+    if (msg.status === 'pending') {
+      actions = `
+        <div class="msg-actions">
+          <button class="btn-approve" onclick="approve(${msg.id})">✓ Onayla & Gönder</button>
+          <button class="btn-edit" onclick="openEdit(${msg.id}, \`${(msg.ai_response || '').replace(/`/g, "'")}\`)">✏️</button>
+          <button class="btn-escalate" onclick="escalate(${msg.id})">🙋</button>
+        </div>`;
+    }
+
+    return `
+      <div class="msg-card" id="msg-${msg.id}">
+        <div class="msg-header">
+          <div>
+            <span class="msg-user">@${msg.sender_username || msg.sender_id}</span>
+            <span class="msg-type ${typeClass}">${typeLabel}</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            ${statusBadge}
+            <span class="msg-time">${time}</span>
+          </div>
+        </div>
+        <div class="msg-bubble">${msg.content}</div>
+        ${msg.ai_response ? `
+          <div class="ai-label">
+            ✦ AI Yanıt
+            <div class="confidence-bar"><div class="confidence-fill" style="width:${conf}%"></div></div>
+            <span style="font-size:10px;color:var(--green)">${conf}%</span>
+          </div>
+          <div class="ai-bubble">${msg.ai_response}</div>
+        ` : ''}
+        ${actions}
+      </div>`;
+  }
+
+  async function approve(msgId, editedResponse = null) {
+    try {
+      const body = { message_id: msgId };
+      if (editedResponse) body.edited_response = editedResponse;
+
+      const resp = await fetch(`${API}/api/messages/approve`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
+      });
+
+      if (resp.ok) {
+        showToast('✓ Mesaj gönderildi!');
+        loadAll();
+      } else {
+        const err = await resp.json();
+        showToast('❌ Hata: ' + (err.detail || 'Gönderilemedi'));
+      }
+    } catch (e) {
+      showToast('❌ Bağlantı hatası');
+    }
+  }
+
+  async function escalate(msgId) {
+    try {
+      const resp = await fetch(`${API}/api/messages/escalate`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ message_id: msgId })
+      });
+      if (resp.ok) {
+        showToast('↗ İnsana yönlendirildi');
+        loadAll();
+      }
+    } catch (e) {}
+  }
+
+  function openEdit(msgId, currentText) {
+    editingMsgId = msgId;
+    document.getElementById('edit-text').value = currentText;
+    document.getElementById('edit-modal').classList.add('open');
+  }
+
+  function closeModal() {
+    document.getElementById('edit-modal').classList.remove('open');
+    editingMsgId = null;
+  }
+
+  function sendEdited() {
+    const text = document.getElementById('edit-text').value.trim();
+    if (!text) return;
+    approve(editingMsgId, text);
+    closeModal();
+  }
+
+  function switchTab(tab) {
+    currentTab = tab;
+    document.querySelectorAll('.tab').forEach((t, i) => {
+      t.classList.toggle('active', ['pending','all','sent'][i] === tab);
+    });
+    loadMessages();
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.style.display = 'block';
+    setTimeout(() => t.style.display = 'none', 3000);
+  }
+
+  // Enter to login
+  document.getElementById('password').addEventListener('keydown', e => {
+    if (e.key === 'Enter') login();
+  });
+</script>
+</body>
+</html>
