@@ -115,13 +115,7 @@ Yukarıdaki bilgi tabanını kullanarak bu mesaja yanıt üret. Sadece JSON dön
         }
 
 
-async def should_auto_send(confidence: float, needs_human: bool, db: asyncpg.Connection) -> bool:
-    """
-    Otomatik gönderilmeli mi?
-    - Güven eşiği aşılmalı
-    - needs_human=False olmalı
-    - after_hours kuralı aktifse ve gece ise otomatik
-    """
+async def should_auto_send(confidence: float, needs_human: bool, db) -> bool:
     if needs_human:
         return False
-    return confidence >= settings.AUTO_REPLY_CONFIDENCE_THRESHOLD
+    return True
