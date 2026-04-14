@@ -56,4 +56,55 @@ async def receive_event(request: Request, db: Connection = Depends(get_db)):
 
             await _process_message(
                 db=db,
-               
+                instagram_id=msg.get("mid", ""),
+                sender_id=messaging["sender"]["id"],
+                sender_username=None,
+                message_type="dm",
+                content=msg.get("text", ""),
+                target_id=messaging["sender"]["id"],
+            )
+
+        # ── Yorumlar ─────────────────────────────────────────────────────────
+        for change in entry.get("changes", []):
+            val = change.get("value", {})
+            if change.get("field") == "comments" and val.get("text"):
+                await _process_message(
+                    db=db,
+                    instagram_id=val.get("id", ""),
+                    sender_id=val.get("from", {}).get("id", ""),
+                    sender_username=val.get("from", {}).get("username"),
+                    message_type="comment",
+                    content=val.get("text", ""),
+                    target_id=val.get("id", ""),
+                )
+
+    return {"status": "ok"}
+
+# ── Ortak işlem fonksiyonu ────────────────────────────────────────────────────
+async def _process_message(
+    db, instagram_id, sender_id, sender_username,
+    message_type, content, target_id
+):
+    if not content.strip():
+        return
+
+    exists = await db.fetchval(
+        "SELECT id FROM messages WHERE instagram_id = $1", instagram_id
+    )
+    if exists:
+        return
+
+    logger.info(f"🔍 İşleniyor [{message_type}]: {content[:60]}")
+
+    ai_result = await generate_reply(content, db)
+
+    auto_send = await should_auto_send(
+        ai_result["confidence"], ai_result["needs_human"], db
+    )
+
+    status = "sent" if auto_send else "pending"
+    sent_at = datetime.now(timezone.utc) if auto_send else None
+
+    row_id = await db.fetchval(
+        """
+       
