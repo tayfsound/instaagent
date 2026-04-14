@@ -18,7 +18,6 @@ from app.services.instagram_service import send_reply
 router = APIRouter()
 logger = logging.getLogger(__name__)
 
-# ── 1) Meta webhook doğrulama (GET) ──────────────────────────────────────────
 @router.get("/instagram")
 async def verify_webhook(request: Request):
     params = request.query_params
@@ -33,7 +32,6 @@ async def verify_webhook(request: Request):
         logger.warning("❌ Webhook doğrulama başarısız")
         raise HTTPException(status_code=403, detail="Forbidden")
 
-# ── 2) Yeni olay geldi (POST) ─────────────────────────────────────────────────
 @router.post("/instagram")
 async def receive_event(request: Request, db: Connection = Depends(get_db)):
     body = await request.json()
@@ -48,7 +46,6 @@ async def receive_event(request: Request, db: Connection = Depends(get_db)):
         return {"status": "ignored"}
 
     for entry in body.get("entry", []):
-        # ── DM mesajları ──────────────────────────────────────────────────────
         for messaging in entry.get("messaging", []):
             msg = messaging.get("message")
             if not msg or msg.get("is_echo"):
@@ -64,7 +61,6 @@ async def receive_event(request: Request, db: Connection = Depends(get_db)):
                 target_id=messaging["sender"]["id"],
             )
 
-        # ── Yorumlar ─────────────────────────────────────────────────────────
         for change in entry.get("changes", []):
             val = change.get("value", {})
             if change.get("field") == "comments" and val.get("text"):
@@ -80,17 +76,11 @@ async def receive_event(request: Request, db: Connection = Depends(get_db)):
 
     return {"status": "ok"}
 
-# ── Ortak işlem fonksiyonu ────────────────────────────────────────────────────
-async def _process_message(
-    db, instagram_id, sender_id, sender_username,
-    message_type, content, target_id
-):
+async def _process_message(db, instagram_id, sender_id, sender_username, message_type, content, target_id):
     if not content.strip():
         return
 
-    exists = await db.fetchval(
-        "SELECT id FROM messages WHERE instagram_id = $1", instagram_id
-    )
+    exists = await db.fetchval("SELECT id FROM messages WHERE instagram_id = $1", instagram_id)
     if exists:
         return
 
@@ -98,13 +88,22 @@ async def _process_message(
 
     ai_result = await generate_reply(content, db)
 
-    auto_send = await should_auto_send(
-        ai_result["confidence"], ai_result["needs_human"], db
-    )
+    auto_send = await should_auto_send(ai_result["confidence"], ai_result["needs_human"], db)
 
     status = "sent" if auto_send else "pending"
     sent_at = datetime.now(timezone.utc) if auto_send else None
 
     row_id = await db.fetchval(
-        """
-       
+        "INSERT INTO messages (instagram_id, sender_id, sender_username, message_type, content, ai_response, ai_confidence, ai_sources, status, sent_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING id",
+        instagram_id, sender_id, sender_username, message_type,
+        content, ai_result["response"], ai_result["confidence"], ai_result["sources"],
+        status, sent_at,
+    )
+
+    if auto_send:
+        success = await send_reply(message_type, target_id, ai_result["response"])
+        if not success:
+            await db.execute("UPDATE messages SET status='pending', sent_at=NULL WHERE id=$1", row_id)
+        logger.info(f"⚡ Otomatik gönderildi — mesaj #{row_id}")
+    else:
+        logger.info(f"⏳ İnsan onayı bekleniyor")
