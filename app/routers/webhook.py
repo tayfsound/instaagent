@@ -4,6 +4,7 @@
 - POST /webhook/instagram  → Yeni mesaj/yorum/story geldi
 """
 from fastapi import APIRouter, Request, HTTPException, Depends
+from fastapi.responses import PlainTextResponse
 from asyncpg import Connection
 import logging
 from datetime import datetime, timezone
@@ -16,15 +17,9 @@ from app.services.instagram_service import send_reply
 router = APIRouter()
 logger = logging.getLogger(__name__)
 
-
 # ── 1) Meta webhook doğrulama (GET) ──────────────────────────────────────────
 @router.get("/instagram")
 async def verify_webhook(request: Request):
-    """
-    Meta bu endpoint'e GET atar, token'ı doğrular.
-    Render'a deploy ettikten sonra Meta Developer Console'dan
-    bu URL'yi girince otomatik çalışır.
-    """
     params = request.query_params
     mode      = params.get("hub.mode")
     token     = params.get("hub.verify_token")
@@ -32,19 +27,14 @@ async def verify_webhook(request: Request):
 
     if mode == "subscribe" and token == settings.INSTAGRAM_VERIFY_TOKEN:
         logger.info("✅ Webhook doğrulandı")
-        return int(challenge)
+        return PlainTextResponse(content=challenge, status_code=200)
     else:
         logger.warning("❌ Webhook doğrulama başarısız")
         raise HTTPException(status_code=403, detail="Forbidden")
 
-
 # ── 2) Yeni olay geldi (POST) ─────────────────────────────────────────────────
 @router.post("/instagram")
 async def receive_event(request: Request, db: Connection = Depends(get_db)):
-    """
-    Meta her yeni DM / yorum / story yanıtında buraya POST atar.
-    Mesajı işler → Claude'a sorar → DB'ye kaydeder → gerekirse otomatik gönderir.
-    """
     body = await request.json()
     logger.info(f"📩 Webhook alındı: {body.get('object')}")
 
@@ -55,7 +45,7 @@ async def receive_event(request: Request, db: Connection = Depends(get_db)):
         # ── DM mesajları ──────────────────────────────────────────────────────
         for messaging in entry.get("messaging", []):
             msg = messaging.get("message")
-            if not msg or msg.get("is_echo"):  # kendi gönderdiğimizi atla
+            if not msg or msg.get("is_echo"):
                 continue
 
             await _process_message(
@@ -84,7 +74,6 @@ async def receive_event(request: Request, db: Connection = Depends(get_db)):
 
     return {"status": "ok"}
 
-
 # ── Ortak işlem fonksiyonu ────────────────────────────────────────────────────
 async def _process_message(
     db, instagram_id, sender_id, sender_username,
@@ -93,7 +82,6 @@ async def _process_message(
     if not content.strip():
         return
 
-    # Duplicate kontrolü
     exists = await db.fetchval(
         "SELECT id FROM messages WHERE instagram_id = $1", instagram_id
     )
@@ -102,7 +90,6 @@ async def _process_message(
 
     logger.info(f"🔍 İşleniyor [{message_type}]: {content[:60]}")
 
-    # Claude'dan yanıt al
     ai_result = await generate_reply(content, db)
 
     auto_send = await should_auto_send(
@@ -112,7 +99,6 @@ async def _process_message(
     status = "sent" if auto_send else "pending"
     sent_at = datetime.now(timezone.utc) if auto_send else None
 
-    # Veritabanına kaydet
     row_id = await db.fetchval("""
         INSERT INTO messages
             (instagram_id, sender_id, sender_username, message_type,
@@ -126,7 +112,6 @@ async def _process_message(
         status, sent_at,
     )
 
-    # Otomatik gönder
     if auto_send:
         success = await send_reply(message_type, target_id, ai_result["response"])
         if not success:
@@ -135,4 +120,4 @@ async def _process_message(
             )
         logger.info(f"⚡ Otomatik gönderildi — mesaj #{row_id}")
     else:
-        logger.info(f"⏳ İnsan onayı bekleniyor — mesaj #{row_id} (güven: {ai_result['confidence']:.0%})")
+        logger.info(f"⏳ İnsan onayı bekleniyor
