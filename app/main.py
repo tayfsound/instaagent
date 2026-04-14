@@ -1,28 +1,34 @@
 from fastapi import FastAPI, Request
-import logging
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
-VERIFY_TOKEN = "basca_2026"
+# CORS (frontend hatalarını bitirir)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
+# Health check
 @app.get("/")
-async def verify_webhook(request: Request):
-    mode = request.query_params.get('hub.mode')
-    token = request.query_params.get('hub.verify_token')
-    challenge = request.query_params.get('hub.challenge')
+async def home():
+    return {"status": "live"}
 
-    if mode == 'subscribe' and token == VERIFY_TOKEN:
-        return challenge
+# Meta webhook endpoint
+@app.post("/webhook")
+async def webhook(request: Request):
+    data = await request.json()
+    print("🔥 WEBHOOK GELDİ")
+    print(data)
+    return {"ok": True}
 
-    return {"status": "ok"}
-
-
-@app.post("/")
-async def handle_message(request: Request):
-    body = await request.json()
-
-    print("🔥 WEBHOOK GELDİ:")
-    print(body)
-
-    # burada log kesin düşer
-    return {"status": "received"}
+# Dummy login endpoint (frontend hatasını keser)
+@app.post("/api/auth/login")
+async def login():
+    return {
+        "status": "ok",
+        "message": "dummy login endpoint (backend ready)"
+    }
