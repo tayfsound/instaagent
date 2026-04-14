@@ -120,4 +120,4 @@ async def _process_message(
             )
         logger.info(f"⚡ Otomatik gönderildi — mesaj #{row_id}")
     else:
-        logger.info(f"⏳ İnsan onayı bekleniyor
+        logger.info(f"⏳ İnsan onayı bekleniyor")
